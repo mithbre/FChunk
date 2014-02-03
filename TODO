@@ -2,7 +2,7 @@
 -Open File
 -Reading into buffer
 Arguments
--Load hash files (-h hash_file)
+-Load hash files (-h)
 -make patch (-m)
 -Patch file (-p)
 
