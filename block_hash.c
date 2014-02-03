@@ -9,9 +9,6 @@ int main()
         unsigned char hash[hashLength];
         uint32_t readLength;
 
-        // Allocate space for the human readable sha1 hash
-        char *fHash = (char *) malloc(sizeof(char) * (hashLength * 2 + 1));
-        char *p = fHash;
 
         // Setup gcrypt
         if (!gcry_check_version (GCRYPT_VERSION)) {
@@ -32,16 +29,26 @@ int main()
                 exit(3);
         }
 
-        // Read into buffer
-        readLength = fread(buffer, sizeof(char), BUFFERLEN, f);
+        do {
+                // Read into buffer
+                readLength = fread(buffer, sizeof(char), BUFFERLEN, f);
+                if (readLength == 0) {
+                        // nothing more to do, skip.
+                        continue;
+                }
+
+                // Hash the buffer
+                gcry_md_hash_buffer(GCRY_MD_SHA1, hash, buffer, readLength);
+
+                // Allocate space for the human readable sha1 hash
+                char *fHash = (char *) malloc(sizeof(char) * (hashLength * 2 + 1));
+                char *p = fHash;
+
+                for(int i = 0; i < hashLength; i++, p += 2) {
+                        snprintf( p, 3, "%02x", hash[i] );
+                }
+                printf("%s\n", fHash);
+        } while (readLength == BUFFERLEN);
         fclose(f);
-
-        // Hash the buffer
-        gcry_md_hash_buffer(GCRY_MD_SHA1, hash, buffer, readLength);
-
-        for(int i = 0; i < hashLength; i++, p += 2) {
-                snprintf( p, 3, "%02x", hash[i] );
-        }
-        printf(fHash);
         return 0;
 }
