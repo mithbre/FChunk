@@ -5,7 +5,11 @@
 
 void usage()
 {
-        printf("Write me.");
+        printf("Expected use:\n");
+        printf("patch.exe file                  # get initial hashes\n");
+        printf("patch.exe (-h hash) file        # compare files\n");
+        printf("patch.exe (-m list) file        # create patch\n");
+        printf("patch.exe (-p patch) file       # patch file\n\n");
 }
 
 int main(int argc, char *argv[])
