@@ -50,12 +50,14 @@ int main(int argc, char *argv[])
         // create a buffer 15 MB in size
         char *buffer = (char*) malloc (sizeof(char) * BUFFERLEN);
 
-        // Load file
+        // Ready files
         FILE *f = fopen(argv[optind], "rb");
         if (f == NULL) {
                 printf("Failed to open file.");
                 exit(3);
         }
+
+        FILE *hashOut = fopen("ghash", "wb");
 
         do {
                 // Read into buffer
@@ -75,8 +77,11 @@ int main(int argc, char *argv[])
                 for(int i = 0; i < hashLength; i++, p += 2) {
                         snprintf( p, 3, "%02x", hash[i] );
                 }
+
                 printf("%s\n", fHash);
+                fwrite(hash, sizeof(char), sizeof(hash), hashOut);
         } while (readLength == BUFFERLEN);
         fclose(f);
+        fclose(hashOut);
         return 0;
 }
