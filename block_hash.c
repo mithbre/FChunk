@@ -70,6 +70,7 @@ int main(int argc, char *argv[])
                 // Hash the buffer
                 gcry_md_hash_buffer(GCRY_MD_SHA1, hash, buffer, readLength);
 
+                #ifdef DEBUG
                 // Allocate space for the human readable sha1 hash
                 char *fHash = (char *) malloc(sizeof(char) * (hashLength * 2 + 1));
                 char *p = fHash;
@@ -77,8 +78,9 @@ int main(int argc, char *argv[])
                 for(int i = 0; i < hashLength; i++, p += 2) {
                         snprintf( p, 3, "%02x", hash[i] );
                 }
-
                 printf("%s\n", fHash);
+                #endif
+
                 fwrite(hash, sizeof(char), sizeof(hash), hashOut);
         } while (readLength == BUFFERLEN);
         fclose(f);
