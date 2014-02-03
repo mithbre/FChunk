@@ -32,11 +32,9 @@ int main(int argc, char *argv[])
                 }
         }
 
-        // get the file we'll be working on
-        if (optind < argc) {
-                fileName = (char*) malloc (sizeof(char) * (strlen(argv[optind]) + 1));
-                strcpy(fileName, argv[optind]);
-        } else {
+        // Check to see if the user has a file argument
+        // optind should be argc - 1
+        if (optind >= argc) {
                 usage();
                 exit(5);
         }
@@ -53,7 +51,7 @@ int main(int argc, char *argv[])
         char *buffer = (char*) malloc (sizeof(char) * BUFFERLEN);
 
         // Load file
-        FILE *f = fopen(fileName, "rb");
+        FILE *f = fopen(argv[optind], "rb");
         if (f == NULL) {
                 printf("Failed to open file.");
                 exit(3);
