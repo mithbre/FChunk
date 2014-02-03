@@ -1,7 +1,6 @@
 ﻿Functionize the program.
 -Open File
 -Reading into buffer
-Loop for reading full file.
 Allow for custom sized chunks (-c 15, --chunk 15), megabytes only for simplicity
 Allow for custom filenames (-s, --source)
 
