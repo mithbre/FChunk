@@ -21,10 +21,13 @@ int main(int argc, char *argv[])
         char *fileName;
 
         int c;
-        while ((c = getopt(argc, argv, "c:")) != -1) {
+        while ((c = getopt(argc, argv, "c:h")) != -1) {
                 switch(c) {
                         case 'c':
                                 BUFFERLEN = atoi(optarg) * 1048576;
+                                break;
+                        case 'h':
+                                // load hash file
                                 break;
                         default:
                                 usage();
