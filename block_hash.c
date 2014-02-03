@@ -18,7 +18,6 @@ int main(int argc, char *argv[])
         const int hashLength = gcry_md_get_algo_dlen( GCRY_MD_SHA1 );
         unsigned char hash[hashLength];
         uint32_t readLength;
-        char *fileName;
 
         int c;
         while ((c = getopt(argc, argv, "c:h")) != -1) {
