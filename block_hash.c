@@ -1,15 +1,34 @@
 ﻿#include <stdio.h>
 #include <stdint.h>
 #include <gcrypt.h>
+#include <getopt.h>
 
-#define BUFFERLEN 15728640
-
-int main()
+void usage()
 {
+        printf("Write me.");
+}
+
+int main(int argc, char *argv[])
+{
+        int BUFFERLEN = 15728640;
         const int hashLength = gcry_md_get_algo_dlen( GCRY_MD_SHA1 );
         unsigned char hash[hashLength];
         uint32_t readLength;
 
+        int c;
+        while ((c = getopt(argc, argv, "c:s:")) != -1) {
+                switch(c) {
+                        case 'c':
+                                BUFFERLEN = atoi(optarg) * 1048576;
+                                break;
+                        case 's':
+                                // source file
+                                break;
+                        default:
+                                usage();
+                                exit(5);
+                }
+        }
 
         // Setup gcrypt
         if (!gcry_check_version (GCRYPT_VERSION)) {
