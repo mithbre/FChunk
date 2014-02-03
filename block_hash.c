@@ -14,20 +14,27 @@ int main(int argc, char *argv[])
         const int hashLength = gcry_md_get_algo_dlen( GCRY_MD_SHA1 );
         unsigned char hash[hashLength];
         uint32_t readLength;
+        char *fileName;
 
         int c;
-        while ((c = getopt(argc, argv, "c:s:")) != -1) {
+        while ((c = getopt(argc, argv, "c:")) != -1) {
                 switch(c) {
                         case 'c':
                                 BUFFERLEN = atoi(optarg) * 1048576;
-                                break;
-                        case 's':
-                                // source file
                                 break;
                         default:
                                 usage();
                                 exit(5);
                 }
+        }
+
+        // get the file we'll be working on
+        if (optind < argc) {
+                fileName = (char*) malloc (sizeof(char) * (strlen(argv[optind]) + 1));
+                strcpy(fileName, argv[optind]);
+        } else {
+                usage();
+                exit(5);
         }
 
         // Setup gcrypt
@@ -42,7 +49,7 @@ int main(int argc, char *argv[])
         char *buffer = (char*) malloc (sizeof(char) * BUFFERLEN);
 
         // Load file
-        FILE *f = fopen("test", "rb");
+        FILE *f = fopen(fileName, "rb");
         if (f == NULL) {
                 printf("Failed to open file.");
                 exit(3);
