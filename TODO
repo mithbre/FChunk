@@ -1,0 +1,25 @@
+﻿Functionize the program.
+-Open File
+-Reading into buffer
+Loop for reading full file.
+Allow for custom sized chunks (-c 15, --chunk 15), megabytes only for simplicity
+Allow for custom filenames (-s, --source)
+
+
+
+High level overview
+-----------------------------
+Step 1:
+Read a in 15MB chunks.
+Hash each chunk and store the hash.
+
+Step 2:
+Do the same thing to another file that is supposed to be the same.
+Store the numbers of differing chunks.
+
+Step 3:
+Copy the corresponding chunks from the original file to a new file.
+
+Step 4:
+Copy those known good chunks into the bad file.
+Recheck.
