@@ -12,17 +12,17 @@ void usage()
         printf("patch.exe (-p patch) file       # patch file\n\n");
 }
 
-int get_file_length(FILE *temp)
+uint32_t get_file_length(FILE *temp)
 {
         fseek(temp, 0, SEEK_END);
-        int length = ftell(temp);
+        uint32_t length = ftell(temp);
         rewind(temp);
         return length;
 }
 
-int load_hashes(uint8_t **loadedHash)
+uint32_t load_hashes(uint8_t **loadedHash)
 {
-        int length;
+        uint32_t length;
         FILE *temp = fopen("ghash", "rb");
 
         length = get_file_length(temp);
@@ -44,9 +44,9 @@ void check_file(FILE *f)
 
 int main(int argc, char *argv[])
 {
-        int BUFFERLEN = 15728640;
+        uint32_t BUFFERLEN = 15728640;  //15 MB
         const int HASHLEN = gcry_md_get_algo_dlen( GCRY_MD_SHA1 );
-        unsigned char hash[HASHLEN];
+        uint8_t hash[HASHLEN];
         uint8_t *goodHashes;
         uint32_t readLength, hashInLength;
 
