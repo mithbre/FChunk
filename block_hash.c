@@ -12,12 +12,30 @@ void usage()
         printf("patch.exe (-p patch) file       # patch file\n\n");
 }
 
+int load_hashes(uint8_t **loadedHash)
+{
+        int length;
+        FILE *temp = fopen("ghash", "rb");
+
+        // Get length of file
+        fseek(temp, 0, SEEK_END);
+        length = ftell(temp);
+        rewind(temp);
+
+        // Allocate space for all Hashes and copy them in
+        *loadedHash = (uint8_t *) malloc(sizeof(uint8_t) * (length + 1));
+        fread(*loadedHash, sizeof(uint8_t), length, temp);
+        fclose(temp);
+        return length;
+}
+
 int main(int argc, char *argv[])
 {
         int BUFFERLEN = 15728640;
         const int hashLength = gcry_md_get_algo_dlen( GCRY_MD_SHA1 );
         unsigned char hash[hashLength];
-        uint32_t readLength;
+        uint8_t *goodHashes;
+        uint32_t readLength, hashInLength;
 
         int c;
         while ((c = getopt(argc, argv, "c:h")) != -1) {
@@ -26,7 +44,8 @@ int main(int argc, char *argv[])
                                 BUFFERLEN = atoi(optarg) * 1048576;
                                 break;
                         case 'h':
-                                // load hash file
+                                hashInLength = load_hashes(&goodHashes);
+                                exit(1);
                                 break;
                         default:
                                 usage();
