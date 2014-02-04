@@ -29,6 +29,14 @@ int load_hashes(uint8_t **loadedHash)
         return length;
 }
 
+void check_file(FILE *f)
+{
+        if (f == NULL) {
+                printf("Failed to open file.");
+                exit(3);
+        }
+}
+
 int main(int argc, char *argv[])
 {
         int BUFFERLEN = 15728640;
@@ -73,12 +81,9 @@ int main(int argc, char *argv[])
 
         // Ready files
         FILE *f = fopen(argv[optind], "rb");
-        if (f == NULL) {
-                printf("Failed to open file.");
-                exit(3);
-        }
-
+        check_file(f);
         FILE *hashOut = fopen("ghash", "wb");
+        check_file(hashOut);
 
         do {
                 // Read into buffer
