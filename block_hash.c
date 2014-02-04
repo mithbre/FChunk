@@ -12,15 +12,20 @@ void usage()
         printf("patch.exe (-p patch) file       # patch file\n\n");
 }
 
+int get_file_length(FILE *temp)
+{
+        fseek(temp, 0, SEEK_END);
+        int length = ftell(temp);
+        rewind(temp);
+        return length;
+}
+
 int load_hashes(uint8_t **loadedHash)
 {
         int length;
         FILE *temp = fopen("ghash", "rb");
 
-        // Get length of file
-        fseek(temp, 0, SEEK_END);
-        length = ftell(temp);
-        rewind(temp);
+        length = get_file_length(temp);
 
         // Allocate space for all Hashes and copy them in
         *loadedHash = (uint8_t *) malloc(sizeof(uint8_t) * (length + 1));
