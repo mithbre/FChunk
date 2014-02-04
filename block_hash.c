@@ -40,8 +40,8 @@ void check_file(FILE *f)
 int main(int argc, char *argv[])
 {
         int BUFFERLEN = 15728640;
-        const int hashLength = gcry_md_get_algo_dlen( GCRY_MD_SHA1 );
-        unsigned char hash[hashLength];
+        const int HASHLEN = gcry_md_get_algo_dlen( GCRY_MD_SHA1 );
+        unsigned char hash[HASHLEN];
         uint8_t *goodHashes;
         uint32_t readLength, hashInLength;
 
@@ -98,10 +98,10 @@ int main(int argc, char *argv[])
 
                 #ifdef DEBUG
                 // Allocate space for the human readable sha1 hash
-                char *fHash = (char *) malloc(sizeof(char) * (hashLength * 2 + 1));
+                char *fHash = (char *) malloc(sizeof(char) * (HASHLEN * 2 + 1));
                 char *p = fHash;
 
-                for(int i = 0; i < hashLength; i++, p += 2) {
+                for(int i = 0; i < HASHLEN; i++, p += 2) {
                         snprintf( p, 3, "%02x", hash[i] );
                 }
                 printf("%s\n", fHash);
