@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
         const int HASHLEN = gcry_md_get_algo_dlen( GCRY_MD_SHA1 );
         uint8_t hash[HASHLEN];
         uint8_t *goodHashes;
-        uint32_t readLength, hashInLength;
+        uint32_t readLength, hashInLength, srcLength;
 
         int c;
         while ((c = getopt(argc, argv, "c:h")) != -1) {
@@ -87,16 +87,14 @@ int main(int argc, char *argv[])
         // Ready files
         FILE *srcFile = fopen(argv[optind], "rb");
         check_file(srcFile);
+        srcLength = get_file_length(srcFile);
         FILE *hashOut = fopen("ghash", "wb");
         check_file(hashOut);
 
-        do {
+        for (uint32_t chunk = 0; chunk <= srcLength/BUFFERLEN; chunk++) {
                 // Read into buffer
+                fseek(srcFile, chunk * BUFFERLEN, SEEK_SET);
                 readLength = fread(buffer, sizeof(char), BUFFERLEN, srcFile);
-                if (readLength == 0) {
-                        // nothing more to do, skip.
-                        continue;
-                }
 
                 // Hash the buffer
                 gcry_md_hash_buffer(GCRY_MD_SHA1, hash, buffer, readLength);
@@ -113,7 +111,7 @@ int main(int argc, char *argv[])
                 #endif
 
                 fwrite(hash, sizeof(char), sizeof(hash), hashOut);
-        } while (readLength == BUFFERLEN);
+        }
         fclose(srcFile);
         fclose(hashOut);
         return 0;
