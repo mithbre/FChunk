@@ -34,6 +34,14 @@ uint32_t load_hashes(uint8_t **loadedHash)
         return length;
 }
 
+uint32_t load_chunk(FILE *f, char *buffer, uint32_t chunk, uint32_t chunk_size)
+{
+        // Read into buffer
+        fseek(f, chunk * chunk_size, SEEK_SET);
+        uint32_t readLength = fread(buffer, sizeof(char), chunk_size, f);
+        return readLength;
+}
+
 void check_file(FILE *f)
 {
         if (f == NULL) {
@@ -92,10 +100,7 @@ int main(int argc, char *argv[])
         check_file(hashOut);
 
         for (uint32_t chunk = 0; chunk <= srcLength/BUFFERLEN; chunk++) {
-                // Read into buffer
-                fseek(srcFile, chunk * BUFFERLEN, SEEK_SET);
-                readLength = fread(buffer, sizeof(char), BUFFERLEN, srcFile);
-
+                readLength = load_chunk(srcFile, buffer, chunk, BUFFERLEN);
                 // Hash the buffer
                 gcry_md_hash_buffer(GCRY_MD_SHA1, hash, buffer, readLength);
 
