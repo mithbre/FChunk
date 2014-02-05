@@ -1,7 +1,4 @@
-﻿Functionize the program.
--Open File
--Reading into buffer
-Arguments
+﻿Arguments
 -Load hash files (-h)
 -make patch (-m)
 -Patch file (-p)
