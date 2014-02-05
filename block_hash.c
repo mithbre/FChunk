@@ -85,14 +85,14 @@ int main(int argc, char *argv[])
         char *buffer = (char*) malloc (sizeof(char) * BUFFERLEN);
 
         // Ready files
-        FILE *f = fopen(argv[optind], "rb");
-        check_file(f);
+        FILE *srcFile = fopen(argv[optind], "rb");
+        check_file(srcFile);
         FILE *hashOut = fopen("ghash", "wb");
         check_file(hashOut);
 
         do {
                 // Read into buffer
-                readLength = fread(buffer, sizeof(char), BUFFERLEN, f);
+                readLength = fread(buffer, sizeof(char), BUFFERLEN, srcFile);
                 if (readLength == 0) {
                         // nothing more to do, skip.
                         continue;
@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
 
                 fwrite(hash, sizeof(char), sizeof(hash), hashOut);
         } while (readLength == BUFFERLEN);
-        fclose(f);
+        fclose(srcFile);
         fclose(hashOut);
         return 0;
 }
