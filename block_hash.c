@@ -50,6 +50,18 @@ void check_file(FILE *f)
         }
 }
 
+void print_hash(uint8_t *hash, const uint32_t HASHLEN)
+{
+        // Allocate space for the human readable sha1 hash
+        char *fHash = (char *) malloc(sizeof(char) * (HASHLEN * 2 + 1));
+        char *p = fHash;
+
+        for(int i = 0; i < HASHLEN; i++, p += 2) {
+                snprintf( p, 3, "%02x", hash[i] );
+        }
+        printf("%s\n", fHash);
+}
+
 int main(int argc, char *argv[])
 {
         uint32_t BUFFERLEN = 15728640;  //15 MB
@@ -105,14 +117,7 @@ int main(int argc, char *argv[])
                 gcry_md_hash_buffer(GCRY_MD_SHA1, hash, buffer, readLength);
 
                 #ifdef DEBUG
-                // Allocate space for the human readable sha1 hash
-                char *fHash = (char *) malloc(sizeof(char) * (HASHLEN * 2 + 1));
-                char *p = fHash;
-
-                for(int i = 0; i < HASHLEN; i++, p += 2) {
-                        snprintf( p, 3, "%02x", hash[i] );
-                }
-                printf("%s\n", fHash);
+                print_hash(hash, HASHLEN);
                 #endif
 
                 fwrite(hash, sizeof(char), sizeof(hash), hashOut);
