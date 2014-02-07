@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
                 print_hash(hash, HASHLEN);
                 #endif
 
-                strcat(curHashes, hash);
+                memcpy(&curHashes[HASHLEN * chunk], hash, HASHLEN);
         }
         fclose(srcFile);
 

@@ -1,9 +1,6 @@
 ﻿Remove hashing of null byte (da39a3ee5e6b4b0d3255bfef95601890afd80709)
 -for files that are multiples of -c
 -caused by hashOutLength = (srcLength / BUFFERLEN + 1) * HASHLEN;
-Fix oversized ghash file
--Run -c 1, with a reasonably large file. There'll be several 0x00 at the end.
--on second thought, it's not oversized. Something is failing.
 Arguments
 -Load hash files (-h)
 -make patch (-m)
