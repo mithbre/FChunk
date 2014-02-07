@@ -111,6 +111,7 @@ int main(int argc, char *argv[])
         hashOutLength = (srcLength / BUFFERLEN + 1) * HASHLEN;
 
         curHashes = (char*) malloc (sizeof(char) * (hashOutLength + 1));
+        curHashes[0] = '\0';
 
         for (uint32_t chunk = 0; chunk <= srcLength/BUFFERLEN; chunk++) {
                 readLength = load_chunk(srcFile, buffer, chunk, BUFFERLEN);
