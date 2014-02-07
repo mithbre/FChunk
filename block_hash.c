@@ -60,6 +60,7 @@ void print_hash(uint8_t *hash, const uint32_t HASHLEN)
                 snprintf( p, 3, "%02x", hash[i] );
         }
         printf("%s\n", fHash);
+        free(fHash);
 }
 
 int main(int argc, char *argv[])
