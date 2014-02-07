@@ -67,8 +67,8 @@ int main(int argc, char *argv[])
         uint32_t BUFFERLEN = 15728640;  //15 MB
         const int HASHLEN = gcry_md_get_algo_dlen( GCRY_MD_SHA1 );
         uint8_t hash[HASHLEN];
-        uint8_t *goodHashes;
-        uint32_t readLength, hashInLength, srcLength;
+        uint8_t *goodHashes, *curHashes;
+        uint32_t readLength, hashInLength, hashOutLength, srcLength;
 
         int c;
         while ((c = getopt(argc, argv, "c:h")) != -1) {
@@ -108,8 +108,9 @@ int main(int argc, char *argv[])
         FILE *srcFile = fopen(argv[optind], "rb");
         check_file(srcFile);
         srcLength = get_file_length(srcFile);
-        FILE *hashOut = fopen("ghash", "wb");
-        check_file(hashOut);
+        hashOutLength = (srcLength / BUFFERLEN + 1) * HASHLEN;
+
+        curHashes = (char*) malloc (sizeof(char) * (hashOutLength + 1));
 
         for (uint32_t chunk = 0; chunk <= srcLength/BUFFERLEN; chunk++) {
                 readLength = load_chunk(srcFile, buffer, chunk, BUFFERLEN);
@@ -120,9 +121,13 @@ int main(int argc, char *argv[])
                 print_hash(hash, HASHLEN);
                 #endif
 
-                fwrite(hash, sizeof(char), sizeof(hash), hashOut);
+                strcat(curHashes, hash);
         }
         fclose(srcFile);
+
+        FILE *hashOut = fopen("ghash", "wb");
+        check_file(hashOut);
+        fwrite(curHashes, sizeof(char), hashOutLength, hashOut);
         fclose(hashOut);
         return 0;
 }
