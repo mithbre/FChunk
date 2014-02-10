@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
         uint32_t BUFFERLEN = 15728640;  //15 MB
         const int HASHLEN = gcry_md_get_algo_dlen( GCRY_MD_SHA1 );
         uint8_t hash[HASHLEN];
-        uint8_t *goodHashes, *curHashes;
+        uint8_t *goodHashes = NULL, *curHashes;
         uint32_t readLength, hashInLength, hashOutLength, srcLength;
 
         int c;
@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
                                 break;
                         case 'h':
                                 hashInLength = load_hashes(&goodHashes);
-                                exit(1);
+                                //exit(1);
                                 break;
                         default:
                                 usage();
@@ -134,6 +134,12 @@ int main(int argc, char *argv[])
         }
         fclose(srcFile);
 
-        writefile("ghash", curHashes, hashOutLength);
+        if (goodHashes == NULL) {
+                // no comparison, just write out hashes
+                writefile("ghash", curHashes, hashOutLength);
+        } else {
+                // file comparison
+                printf("Pretend we're comparing hashes now...\n");
+        }
         return 0;
 }
