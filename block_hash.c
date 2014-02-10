@@ -143,7 +143,8 @@ int main(int argc, char *argv[])
         } else {
                 for (uint32_t chunk = 0; chunk < hashInLength/HASHLEN; chunk++) {
 
-                        if (memcmp(&goodHashes[chunk*HASHLEN], &curHashes[chunk*HASHLEN], HASHLEN) == 0) {
+                        if (memcmp(&goodHashes[chunk*HASHLEN],
+                            &curHashes[chunk*HASHLEN], HASHLEN) == 0) {
                                 printf("%2i: Good\n", chunk);
                         } else {
                                 printf("%i: Bad\n", chunk);
