@@ -141,8 +141,14 @@ int main(int argc, char *argv[])
                 // no comparison, just write out hashes
                 writefile("ghash", curHashes, hashOutLength);
         } else {
-                // file comparison
-                printf("Pretend we're comparing hashes now...\n");
+                for (uint32_t chunk = 0; chunk < hashInLength/HASHLEN; chunk++) {
+
+                        if (memcmp(&goodHashes[chunk*HASHLEN], &curHashes[chunk*HASHLEN], HASHLEN) == 0) {
+                                printf("%2i: Good\n", chunk);
+                        } else {
+                                printf("%i: Bad\n", chunk);
+                        }
+                }
         }
         return 0;
 }
