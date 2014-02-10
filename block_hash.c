@@ -78,6 +78,7 @@ int main(int argc, char *argv[])
         uint8_t hash[HASHLEN];
         uint8_t *goodHashes = NULL, *curHashes;
         uint32_t readLength, hashInLength, hashOutLength, srcLength, pos;
+        uint32_t bitfieldLength, byte;
 
         int c;
         while ((c = getopt(argc, argv, "c:h")) != -1) {
@@ -141,6 +142,8 @@ int main(int argc, char *argv[])
                 // no comparison, just write out hashes
                 writefile("ghash", curHashes, hashOutLength);
         } else {
+                bitfieldLength = ((hashInLength / HASHLEN) + 7) / 8;
+                uint8_t *a = calloc(bitfieldLength, sizeof(char));
                 for (uint32_t chunk = 0; chunk < hashInLength/HASHLEN; chunk++) {
                         pos = chunk * HASHLEN;
                         if (pos > hashOutLength) {
@@ -150,12 +153,15 @@ int main(int argc, char *argv[])
                         }
 
                         if (memcmp(&goodHashes[pos], &curHashes[pos],
-                            HASHLEN) == 0) {
-                                printf("%2i: Good\n", chunk);
-                        } else {
-                                printf("%i: Bad\n", chunk);
+                            HASHLEN) != 0) {
+                                #ifdef DEBUG
+                                printf("%2i: Bad\n", chunk);
+                                #endif
+                                byte = chunk / 8;
+                                a[byte] |= 1 << (chunk % 8);
                         }
                 }
+                writefile("bchunk", a, bitfieldLength);
         }
         return 0;
 }
