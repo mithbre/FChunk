@@ -87,7 +87,10 @@ int main(int argc, char *argv[])
                                 break;
                         case 'h':
                                 hashInLength = load_hashes(&goodHashes);
-                                //exit(1);
+                                if (hashInLength % HASHLEN != 0) {
+                                        printf("ghash not of correct length.\n");
+                                        exit(1);
+                                }
                                 break;
                         default:
                                 usage();
