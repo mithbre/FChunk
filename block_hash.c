@@ -82,19 +82,19 @@ int main(int argc, char *argv[])
         int c;
         while ((c = getopt(argc, argv, "c:h")) != -1) {
                 switch(c) {
-                        case 'c':
-                                BUFFERLEN = atoi(optarg) * 1048576;
-                                break;
-                        case 'h':
-                                hashInLength = load_hashes(&goodHashes);
-                                if (hashInLength % HASHLEN != 0) {
-                                        printf("ghash not of correct length.\n");
-                                        exit(1);
-                                }
-                                break;
-                        default:
-                                usage();
-                                exit(5);
+                case 'c':
+                        BUFFERLEN = atoi(optarg) * 1048576;
+                        break;
+                case 'h':
+                        hashInLength = load_hashes(&goodHashes);
+                        if (hashInLength % HASHLEN != 0) {
+                                printf("ghash not of correct length.\n");
+                                exit(1);
+                        }
+                        break;
+                default:
+                        usage();
+                        exit(5);
                 }
         }
 
