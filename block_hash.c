@@ -63,6 +63,14 @@ void print_hash(uint8_t *hash, const uint32_t HASHLEN)
         free(fHash);
 }
 
+int writefile(char *name, uint8_t *write, uint32_t length)
+{
+        FILE *f = fopen(name, "wb");
+        check_file(f);
+        fwrite(write, sizeof(char), length, f);
+        fclose(f);
+}
+
 int main(int argc, char *argv[])
 {
         uint32_t BUFFERLEN = 15728640;  //15 MB
@@ -126,9 +134,6 @@ int main(int argc, char *argv[])
         }
         fclose(srcFile);
 
-        FILE *hashOut = fopen("ghash", "wb");
-        check_file(hashOut);
-        fwrite(curHashes, sizeof(char), hashOutLength, hashOut);
-        fclose(hashOut);
+        writefile("ghash", curHashes, hashOutLength);
         return 0;
 }
