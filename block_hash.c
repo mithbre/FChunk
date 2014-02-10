@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
         const int HASHLEN = gcry_md_get_algo_dlen( GCRY_MD_SHA1 );
         uint8_t hash[HASHLEN];
         uint8_t *goodHashes = NULL, *curHashes;
-        uint32_t readLength, hashInLength, hashOutLength, srcLength;
+        uint32_t readLength, hashInLength, hashOutLength, srcLength, pos;
 
         int c;
         while ((c = getopt(argc, argv, "c:h")) != -1) {
@@ -142,9 +142,15 @@ int main(int argc, char *argv[])
                 writefile("ghash", curHashes, hashOutLength);
         } else {
                 for (uint32_t chunk = 0; chunk < hashInLength/HASHLEN; chunk++) {
+                        pos = chunk * HASHLEN;
+                        if (pos > hashOutLength) {
+                                // Missing data in the destination file
+                                // fill_with_bad();
+                                break;
+                        }
 
-                        if (memcmp(&goodHashes[chunk*HASHLEN],
-                            &curHashes[chunk*HASHLEN], HASHLEN) == 0) {
+                        if (memcmp(&goodHashes[pos], &curHashes[pos],
+                            HASHLEN) == 0) {
                                 printf("%2i: Good\n", chunk);
                         } else {
                                 printf("%i: Bad\n", chunk);
