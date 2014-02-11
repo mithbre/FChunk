@@ -76,12 +76,12 @@ int main(int argc, char *argv[])
         uint32_t BUFFERLEN = 15728640;  //15 MB
         const int HASHLEN = gcry_md_get_algo_dlen( GCRY_MD_SHA1 );
         uint8_t hash[HASHLEN];
-        uint8_t *goodHashes = NULL, *curHashes;
+        uint8_t *goodHashes = NULL, *curHashes, *badChunks;
         uint32_t readLength, hashInLength, hashOutLength, srcLength, pos;
-        uint32_t bitfieldLength, byte;
+        uint32_t bitfieldLength, byte, bChunkLength;
 
         int c;
-        while ((c = getopt(argc, argv, "c:h")) != -1) {
+        while ((c = getopt(argc, argv, "c:hm")) != -1) {
                 switch(c) {
                 case 'c':
                         BUFFERLEN = atoi(optarg) * 1048576;
@@ -92,6 +92,12 @@ int main(int argc, char *argv[])
                                 printf("ghash not of correct length.\n");
                                 exit(1);
                         }
+                        break;
+                case 'm':
+                        bChunkLength = load_data(&badChunks, "bchunk");
+                        printf("%i\n", bChunkLength);
+
+                        exit(1);
                         break;
                 default:
                         usage();
