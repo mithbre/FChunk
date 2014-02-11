@@ -20,16 +20,15 @@ uint32_t get_file_length(FILE *temp)
         return length;
 }
 
-uint32_t load_hashes(uint8_t **loadedHash)
+uint32_t load_data(uint8_t **loadMe, char *name)
 {
         uint32_t length;
-        FILE *temp = fopen("ghash", "rb");
+        FILE *temp = fopen(name, "rb");
 
         length = get_file_length(temp);
 
-        // Allocate space for all Hashes and copy them in
-        *loadedHash = (uint8_t *) malloc(sizeof(uint8_t) * (length + 1));
-        fread(*loadedHash, sizeof(uint8_t), length, temp);
+        *loadMe = (uint8_t *) malloc(sizeof(uint8_t) * (length + 1));
+        fread(*loadMe, sizeof(uint8_t), length, temp);
         fclose(temp);
         return length;
 }
@@ -88,7 +87,7 @@ int main(int argc, char *argv[])
                         BUFFERLEN = atoi(optarg) * 1048576;
                         break;
                 case 'h':
-                        hashInLength = load_hashes(&goodHashes);
+                        hashInLength = load_data(&goodHashes, "ghash");
                         if (hashInLength % HASHLEN != 0) {
                                 printf("ghash not of correct length.\n");
                                 exit(1);
