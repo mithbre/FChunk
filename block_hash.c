@@ -63,10 +63,11 @@ void print_hash(uint8_t *hash, const uint32_t HASHLEN)
         free(fHash);
 }
 
-int writefile(char *name, uint8_t *write, uint32_t length)
+int writefile(char *name, uint8_t *write, uint32_t length, uint32_t pos)
 {
         FILE *f = fopen(name, "wb");
         check_file(f);
+        fseek(f, pos, SEEK_SET);
         fwrite(write, sizeof(char), length, f);
         fclose(f);
 }
@@ -140,7 +141,7 @@ int main(int argc, char *argv[])
 
         if (goodHashes == NULL) {
                 // no comparison, just write out hashes
-                writefile("ghash", curHashes, hashOutLength);
+                writefile("ghash", curHashes, hashOutLength, 0);
         } else {
                 bitfieldLength = ((hashInLength / HASHLEN) + 7) / 8;
                 uint8_t *a = calloc(bitfieldLength, sizeof(char));
@@ -161,7 +162,7 @@ int main(int argc, char *argv[])
                                 a[byte] |= 1 << (chunk % 8);
                         }
                 }
-                writefile("bchunk", a, bitfieldLength);
+                writefile("bchunk", a, bitfieldLength, 0);
         }
         return 0;
 }
