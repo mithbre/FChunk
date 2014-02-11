@@ -6,4 +6,4 @@ default:
 	$(CC) -o t src/block_hash.c src/fileops.c -std=c99 -DDEBUG `$(LDFLAGS)`
 
 optim:
-	$(CC) -o t block_hash.c -std=c99 $(CFLAGS) `$(LDFLAGS)`
+	$(CC) -o t src/block_hash.c src/fileops.c -std=c99 $(CFLAGS) `$(LDFLAGS)`
