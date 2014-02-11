@@ -3,6 +3,8 @@
 #include <gcrypt.h>
 #include <getopt.h>
 
+#include "fileops.h"
+
 void usage()
 {
         printf("Expected use:\n");
@@ -10,43 +12,6 @@ void usage()
         printf("patch.exe (-h hash) file        # compare files\n");
         printf("patch.exe (-m list) file        # create patch\n");
         printf("patch.exe (-p patch) file       # patch file\n\n");
-}
-
-uint32_t get_file_length(FILE *temp)
-{
-        fseek(temp, 0, SEEK_END);
-        uint32_t length = ftell(temp);
-        rewind(temp);
-        return length;
-}
-
-uint32_t load_data(uint8_t **loadMe, char *name)
-{
-        uint32_t length;
-        FILE *temp = fopen(name, "rb");
-
-        length = get_file_length(temp);
-
-        *loadMe = (uint8_t *) malloc(sizeof(uint8_t) * (length + 1));
-        fread(*loadMe, sizeof(uint8_t), length, temp);
-        fclose(temp);
-        return length;
-}
-
-uint32_t load_chunk(FILE *f, char *buffer, uint32_t chunk, uint32_t chunk_size)
-{
-        // Read into buffer
-        fseek(f, chunk * chunk_size, SEEK_SET);
-        uint32_t readLength = fread(buffer, sizeof(char), chunk_size, f);
-        return readLength;
-}
-
-void check_file(FILE *f)
-{
-        if (f == NULL) {
-                printf("Failed to open file.");
-                exit(3);
-        }
 }
 
 void print_hash(uint8_t *hash, const uint32_t HASHLEN)
@@ -60,16 +25,6 @@ void print_hash(uint8_t *hash, const uint32_t HASHLEN)
         }
         printf("%s\n", fHash);
         free(fHash);
-}
-
-int writefile(char *name, uint8_t *write, uint32_t length, uint32_t pos,
-    char *opentype)
-{
-        FILE *f = fopen(name, opentype);
-        check_file(f);
-        fseek(f, pos, SEEK_SET);
-        fwrite(write, sizeof(char), length, f);
-        fclose(f);
 }
 
 int main(int argc, char *argv[])
