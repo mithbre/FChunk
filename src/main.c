@@ -4,6 +4,7 @@
 #include <getopt.h>
 
 #include "fileops.h"
+#include "hashops.h"
 
 void usage()
 {
@@ -14,26 +15,12 @@ void usage()
         printf("patch.exe (-p patch) file       # patch file\n\n");
 }
 
-void print_hash(uint8_t *hash, const uint32_t HASHLEN)
-{
-        // Allocate space for the human readable sha1 hash
-        char *fHash = (char *) malloc(sizeof(char) * (HASHLEN * 2 + 1));
-        char *p = fHash;
-
-        for(int i = 0; i < HASHLEN; i++, p += 2) {
-                snprintf( p, 3, "%02x", hash[i] );
-        }
-        printf("%s\n", fHash);
-        free(fHash);
-}
-
 int main(int argc, char *argv[])
 {
         uint32_t BUFFERLEN = 15728640;  //15 MB
         const int HASHLEN = gcry_md_get_algo_dlen( GCRY_MD_SHA1 );
-        uint8_t hash[HASHLEN];
         uint8_t *goodHashes = NULL, *curHashes, *badChunks;
-        uint32_t readLength, hashInLength, hashOutLength, srcLength, pos;
+        uint32_t hashInLength, hashOutLength, srcLength, pos;
         uint32_t bitfieldLength, byte, bChunkLength;
 
         int c;
@@ -68,36 +55,14 @@ int main(int argc, char *argv[])
                 exit(5);
         }
 
-        // Setup gcrypt
-        if (!gcry_check_version (GCRYPT_VERSION)) {
-                printf("Failed to load gcrypt.");
-                exit(2);
-        }
-        gcry_control (GCRYCTL_DISABLE_SECMEM, 0);
-        gcry_control (GCRYCTL_INITIALIZATION_FINISHED, 0);
-
-        // create a buffer 15 MB in size
-        char *buffer = (char*) malloc (sizeof(char) * BUFFERLEN);
-
         // Ready files
         FILE *srcFile = fopen(argv[optind], "rb");
         check_file(srcFile);
         srcLength = get_file_length(srcFile);
         hashOutLength = (srcLength / BUFFERLEN + 1) * HASHLEN;
-
         curHashes = (char*) malloc (sizeof(char) * (hashOutLength + 1));
 
-        for (uint32_t chunk = 0; chunk <= srcLength/BUFFERLEN; chunk++) {
-                readLength = load_chunk(srcFile, buffer, chunk, BUFFERLEN);
-                // Hash the buffer
-                gcry_md_hash_buffer(GCRY_MD_SHA1, hash, buffer, readLength);
-
-                #ifdef DEBUG
-                print_hash(hash, HASHLEN);
-                #endif
-
-                memcpy(&curHashes[HASHLEN * chunk], hash, HASHLEN);
-        }
+        hash_file(srcFile, srcLength, curHashes, HASHLEN, BUFFERLEN);
         fclose(srcFile);
 
         if (goodHashes == NULL) {
