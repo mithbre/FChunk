@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
         check_file(srcFile);
         srcLength = get_file_length(srcFile);
         hashOutLength = (srcLength / BUFFERLEN + 1) * HASHLEN;
-        curHashes = (char*) malloc (sizeof(char) * (hashOutLength + 1));
+        curHashes = (uint8_t*) malloc (sizeof(uint8_t) * (hashOutLength + 1));
 
         hash_file(srcFile, srcLength, curHashes, HASHLEN, BUFFERLEN);
         fclose(srcFile);
