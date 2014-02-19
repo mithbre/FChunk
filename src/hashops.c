@@ -20,6 +20,7 @@ void print_hash(uint8_t *hash, const uint32_t HASHLEN)
 void hash_file(FILE *srcFile, uint32_t srcLength, uint8_t *curHashes,
     const int HASHLEN, uint32_t BUFFERLEN)
 {
+        uint8_t hash[HASHLEN];
         uint32_t readLength;
         // Setup gcrypt
         if (!gcry_check_version (GCRYPT_VERSION)) {
@@ -29,7 +30,6 @@ void hash_file(FILE *srcFile, uint32_t srcLength, uint8_t *curHashes,
         gcry_control (GCRYCTL_DISABLE_SECMEM, 0);
         gcry_control (GCRYCTL_INITIALIZATION_FINISHED, 0);
 
-        uint8_t hash[HASHLEN];
         // create a buffer 15 MB in size
         char *buffer = (char*) malloc (sizeof(char) * BUFFERLEN);
 
