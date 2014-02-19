@@ -19,9 +19,9 @@ int main(int argc, char *argv[])
 {
         uint32_t BUFFERLEN = 15728640;  //15 MB
         const int HASHLEN = gcry_md_get_algo_dlen( GCRY_MD_SHA1 );
-        uint8_t *goodHashes = NULL, *curHashes, *badChunks;
-        uint32_t hashInLength, hashOutLength, srcLength, pos;
-        uint32_t bitfieldLength, byte, bChunkLength;
+        uint8_t *curHashes, *badChunks, *goodHashes;
+        uint32_t hashOutLength, srcLength;
+        uint32_t bitfieldLength, bChunkLength, hashInLength;
 
         int c;
         while ((c = getopt(argc, argv, "c:hm")) != -1) {
@@ -62,33 +62,23 @@ int main(int argc, char *argv[])
         hashOutLength = (srcLength / BUFFERLEN + 1) * HASHLEN;
         curHashes = (uint8_t*) malloc (sizeof(uint8_t) * (hashOutLength + 1));
 
-        hash_file(srcFile, srcLength, curHashes, HASHLEN, BUFFERLEN);
-        fclose(srcFile);
-
         if (goodHashes == NULL) {
                 // no comparison, just write out hashes
+                hash_file(srcFile, srcLength, curHashes, HASHLEN, BUFFERLEN);
+                fclose(srcFile);
                 writefile("ghash", curHashes, hashOutLength, 0, "wb");
-        } else {
+                /* if new file is longer...ignore, warn? */
+                hash_file(srcFile, srcLength, curHashes, HASHLEN, BUFFERLEN);
+                fclose(srcFile);
+
+                // Allocate space for all chunk statuses
                 bitfieldLength = ((hashInLength / HASHLEN) + 7) / 8;
                 uint8_t *a = calloc(bitfieldLength, sizeof(char));
-                for (uint32_t chunk = 0; chunk < hashInLength/HASHLEN; chunk++) {
-                        pos = chunk * HASHLEN;
-                        if (pos > hashOutLength) {
-                                // Missing data in the destination file
-                                // fill_with_bad();
-                                break;
-                        }
 
-                        if (memcmp(&goodHashes[pos], &curHashes[pos],
-                            HASHLEN) != 0) {
-                                #ifdef DEBUG
-                                printf("%2i: Bad\n", chunk);
-                                #endif
-                                byte = chunk / 8;
-                                a[byte] |= 1 << (chunk % 8);
-                        }
-                }
+                cmp_hashes(curHashes, goodHashes, hashOutLength, a, HASHLEN,
+                    hashInLength);
                 writefile("bchunk", a, bitfieldLength, 0, "wb");
+                free(a);
         }
         return 0;
 }

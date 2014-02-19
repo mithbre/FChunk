@@ -46,3 +46,27 @@ void hash_file(FILE *srcFile, uint32_t srcLength, uint8_t *curHashes,
         }
         free(buffer);
 }
+
+void cmp_hashes(uint8_t *curHashes, uint8_t *goodHashes, uint32_t hashOutLength, uint8_t *a,
+    const int HASHLEN, uint32_t hashInLength)
+{
+        uint8_t byte;
+        uint32_t pos;
+
+        for (uint32_t chunk = 0; chunk < hashInLength/HASHLEN; chunk++) {
+                pos = chunk * HASHLEN;
+                if (pos > hashOutLength) {
+                        // Missing data in the destination file
+                        // fill_with_bad();
+                        break;
+                }
+
+                if (memcmp(&goodHashes[pos], &curHashes[pos], HASHLEN) != 0) {
+                        #ifdef DEBUG
+                        printf("%2i: Bad\n", chunk);
+                        #endif
+                        byte = chunk / 8;
+                        a[byte] |= 1 << (chunk % 8);
+                }
+        }
+}
